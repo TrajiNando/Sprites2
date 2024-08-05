@@ -1,0 +1,79 @@
+; Primer acercamiento al tema de los sprites.
+; La idea es colocar 1 o 2 sprites libremente.
+;
+; Mencionar que se podría haber hecho una rom de 2K, pero por estandarizar, se usa una de 4K.
+
+
+; Primero, informamos al ensamblador que estamos usando un 6502 (aunque sea un 6507 realmente)
+	processor 6502
+	
+; Se incluyen los ficheros para variables básicas del Atari 2600 y algunas funciones Macro
+	include "vcs.h"
+	include "macro.h"
+
+; Variables
+Posx	equ #$80
+Posy	equ #$81
+	
+; Las roms de Atari 2600 empiezan en f000
+	org  $f000
+
+Start 	CLEAN_START	; Rutina básica de inicialización
+
+NextFrame		
+	VERTICAL_SYNC	; Macro para las 3 líneas de sincronización + 1 VSYNC para empezar
+	
+; 36 lineas de VBLANK
+	ldx #36		; Carga 36 en X
+LVBlank	sta WSYNC	; Invoca a WSYNC (no importa el valor que se le pase)
+	dex		; Decrementa X
+	bne LVBlank	; Salta a 'LVBlank' hasta que X = 0
+        stx VBLANK	; Deshabilita VBLANK porque X en este punto vale 0.
+
+; Rutina básica para poner el fondo negro.
+	lda #$00	; Carga el valor $00 en A (Fondo negro)
+	sta COLUBK	; Guarda el valor de A en el registro de color de fondo COLUBK
+
+; Pintamos las 192 filas
+	lda #100
+        sta Posy
+        lda #200
+        sta COLUP0
+	ldx #192	; Cargamos en X el valor de filas
+ScanLoop
+	sta WSYNC	; Esperamos al siguiente Scanline
+        lda #0
+        sta GRP0
+        txa		; Transfiere X a A
+        clc		; Borra acarreo
+        sbc Posy	; Resta con acarreo
+        bpl Nopinta	; salta si sigue siendo positivo o 0
+        adc #8
+        bmi Nopinta	; Salta si se ha pasado de 8
+        tay
+	lda Sprite,Y
+        sta GRP0
+Nopinta    
+	dex		; Decrementamos X
+	bne ScanLoop	; Repite hasta que X = 0
+
+        
+
+; 30 líneas de Overscan
+	lda #2		; Cargamos 2 en A
+        sta VBLANK	; Rehabilitamos VBLANK
+	ldx #30		; Cargamos 30 en X (30 lineas de overscan)
+LVOver	sta WSYNC	; Esperamos al siguiente Scanline
+	dex		; Decrementamos X
+	bne LVOver	; Bucle hasta que X = 0
+	
+; Finalizada la pantalla, saltamos a un nuevo frame
+	jmp NextFrame	; Salta sin condición a 'NextFrame'
+        
+Sprite	.byte	$3C,$66,$DB,$FF,$FF,$DB,$7E,$3C
+	
+; Punteros de inicialización del Atari 2600 en una rom de 4Kb
+	org $fffa
+        .word Start	; NMI. Otra vez, inútil en un 6507. (Interrupción no enmascarable) 
+        .word Start	; RES. Vector Reset. Este si se usa. Le dice a la CPU por donde empezar.
+	.word Start	; IRQ. Vector para Break e IRQ. (Interrupción enmascarable) 
