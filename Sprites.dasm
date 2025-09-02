@@ -10,11 +10,8 @@
 ; Se incluyen los ficheros para variables básicas del Atari 2600 y algunas funciones Macro
 	include "vcs.h"
 	include "macro.h"
-
-; Variables
-Posx	equ #$80
-Posy	equ #$81
 	
+
 ; Las roms de Atari 2600 empiezan en f000
 	org  $f000
 
@@ -40,22 +37,20 @@ LVBlank	sta WSYNC	; Invoca a WSYNC (no importa el valor que se le pase)
         lda #200
         sta COLUP0
 	ldx #192	; Cargamos en X el valor de filas
-ScanLoop
-	sta WSYNC	; Esperamos al siguiente Scanline
-        lda #0
-        sta GRP0
-        txa		; Transfiere X a A
-        clc		; Borra acarreo
-        sbc Posy	; Resta con acarreo
-        bpl Nopinta	; salta si sigue siendo positivo o 0
-        adc #8
-        bmi Nopinta	; Salta si se ha pasado de 8
-        tay
-	lda Sprite,Y
-        sta GRP0
-Nopinta    
-	dex		; Decrementamos X
-	bne ScanLoop	; Repite hasta que X = 0
+LVScan
+	txa		; X -> A
+        sec		; Pone el acarreo para restar
+        sbc Posy	; Posición Y
+        cmp 9		; 8 es la altura del sprite, si la resta es menor de 8 está en sprite
+        bcc InSprite	; Si, sáltate la asignación a 0
+        lda #0		; No sprite carga el color 0
+InSprite
+	tay		; local coord -> Y
+        lda Sprite,y	; lookup color
+        sta WSYNC	; sync w/ scanline
+        sta GRP0	; store bitmap
+        dex		; decrement X
+        bne LVScan	; repeat until 192 lines
 
         
 
@@ -70,7 +65,11 @@ LVOver	sta WSYNC	; Esperamos al siguiente Scanline
 ; Finalizada la pantalla, saltamos a un nuevo frame
 	jmp NextFrame	; Salta sin condición a 'NextFrame'
         
-Sprite	.byte	$3C,$66,$DB,$FF,$FF,$DB,$7E,$3C
+Sprite	.byte	$00, $3C,$66,$DB,$FF,$FF,$DB,$7E,$3C
+
+; Variables
+Posx	.byte #$86
+Posy	.byte #10
 	
 ; Punteros de inicialización del Atari 2600 en una rom de 4Kb
 	org $fffa
