@@ -14,14 +14,14 @@
 	org $80
 	seg Code
         org $f000
-
+2
 Start
 	CLEAN_START
 
 NextFrame
 	VERTICAL_SYNC
 
-	TIMER_SETUP 37
+	TIMER_SETUP 42
 ; Set playfield foreground and background
         lda #$00
         sta COLUBK
@@ -29,7 +29,7 @@ NextFrame
         sta COLUPF
         TIMER_WAIT
 
-        ldy #192
+        ldy #240
 ScanLoop
 ; WSYNC and store playfield registers
 	sta WSYNC
@@ -60,7 +60,7 @@ ScanLoop
         sta PF1
         sta PF2		; clear playfield
 
-	TIMER_SETUP 28
+	TIMER_SETUP 25
         TIMER_WAIT
         jmp NextFrame
 
@@ -69,6 +69,7 @@ ScanLoop
 
 PFBitmap0
 	hex 00
+        hex 00000000000000000000000000000000
         hex 00000000000000000000000000000000
        	hex 00002000000000400000001000008000
         hex 00002000000000400000001000008000
@@ -81,9 +82,12 @@ PFBitmap0
 	hex 0000f000f000f000f000f000f000f000
 	hex 0000f000f000f000f000f000f000f000
 	hex 0000f000f000f000f000f000f000f000
+        hex 0000f000f000f000f000f000f000f000
+        hex 0000f000f000f000f000f000f000f000
 PFBitmap1
 	hex 00
-	hex 00000000000000000000000000000000
+	hex 67675252525262625252565662620000
+        hex 67675252525262625252565662620000
         hex 00f0fff0fff0fff0fff0fff0fff0fff0
 	hex 00f0fff0fff0fff0fff0fff0fff0fff0
 	hex 00f0fff0fff0fff0fff0fff0fff0fff0
@@ -95,9 +99,12 @@ PFBitmap1
         hex 0000ff00ff00ff00ff00ff00ff00ff00
 	hex 0000ff00ff00ff00ff00ff00ff00ff00
 	hex 0000ff00fb04f10Ef10Ef10Efb04fd02
+        hex 0000ff00ff00ff00ff00ff00ff00ff00
+	hex 0000ff00ff00ff00ff00ff00ff00ff00
 PFBitmap2
 	hex 00
-        hex 00000000000000000000000000000000
+        hex eeee82828282eeee88888888eeee0000
+        hex eeee82828282eeee88888888eeee0000
 	hex 0000ff00ff00ff00ff00ff00ff00ff00
         hex 00fffffff9fff9fff9fff9fff9ffffff
 	hex 000f2f0f0f0f0f4f0f0f0f1f0f0f8f0f
@@ -109,9 +116,12 @@ PFBitmap2
 	hex 0000ff00ff00ff00ff00ff00ff00ff00
 	hex 0000ff00ff00ff00ff00ff00ff00ff00
 	hex 0000ff00ff00ff00ff00ff00ff00ff00
+        hex 0000ff00ff00ff00ff00ff00ff00ff00
+	hex 0000ff00ff00ff00ff00ff00ff00ff00
 PFBitmap3
 	hex 00
 	hex 00000000000000000000000000000000
+        hex 00000000000000000000000000000000
 	hex 0000f000f000f000f000f000f000f000
 	hex 00f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0
 	hex 00002000000000400000001000008000
@@ -123,9 +133,12 @@ PFBitmap3
 	hex 00f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0
 	hex 00f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0
 	hex 0000f000f000f000f000f000f000f000
+        hex 00f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0
+	hex 00f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0
 PFBitmap4
 	hex 00
-	hex 00000000000000000000000000000000
+	hex 27272424242427272121212177770000
+        hex 27272424242427272121212177770000
 	hex 0000ff00ff00ff00ff00ff00ff00ff00
 	hex 00ffffffffffffffffffffffffffffff
 	hex 000f4f0f0f0f0f2f0f0f0f8f0f0f1f0f
@@ -137,9 +150,12 @@ PFBitmap4
 	hex 00004400000000220000008800001100
 	hex 00ffffffffffffffffffffffffffffff
 	hex 0000f708f708f708f30cf50af50af30c
+	hex 00f0fff09ff09ff09ff09ff09ff0fff0
+	hex 00f0fff0fff0fff0fff0fff0fff0fff0
 PFBitmap5
 	hex 00
-	hex 00000000000000000000000000000000
+	hex eeee8a8a8a8aeeeeaaaaaaaaeeee0000
+        hex eeee8a8a8a8aeeeeaaaaaaaaeeee0000
 	hex 00ff00ff00ff00ff00ff00ff00ff00ff
 	hex 0000ff00ff00ff00ff00ff00ff00ff00
 	hex 000fff0fff0fff0fff0fff0fff0fff0f
@@ -151,20 +167,25 @@ PFBitmap5
 	hex 000fff0fff0fff0fff0fff0fff0fff0f
 	hex 000fff0ff90ff90ff90ff90ff90fff0f
 	hex 0000ff00ff00ff00ff00ff00ff00ff00
+	hex 00fffffff9fff9fff9fff9fff9ffffff
+	hex 000f2f0f0f0f0f4f0f0f0f1f0f0f8f0f
 Colores
 	hex 00
-        hex 52c652c652c652c652c652c652c652c6
-        hex 52c652c652c652c652c652c652c652c6
-        hex 52c652c652c652c652c652c652c652c6
-        hex 52c652c652c652c652c652c652c652c6
-        hex 52c652c652c652c652c652c652c652c6
-        hex 52c652c652c652c652c652c652c652c6
-        hex 52c652c652c652c652c652c652c652c6
-        hex 52c652c652c652c652c652c652c652c6
-        hex 52c652c652c652c652c652c652c652c6
-        hex 52c652c652c652c652c652c652c652c6
-        hex 52c652c652c652c652c652c652c652c6
-        hex 52c652c652c652c652c652c652c652c6
+        hex 2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c
+        hex 2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c
+        hex a658a658a658a658a658a658a658a658
+        hex a658a658a658a658a658a658a658a658
+        hex a658a658a658a658a658a658a658a658
+        hex a658a658a658a658a658a658a658a658
+        hex a658a658a658a658a658a658a658a658
+        hex a658a658a658a658a658a658a658a658
+        hex a658a658a658a658a658a658a658a658
+        hex a658a658a658a658a658a658a658a658
+        hex a658a658a658a658a658a658a658a658
+        hex a658a658a658a658a658a658a658a658
+        hex a658a658a658a658a658a658a658a658
+        hex a658a658a658a658a658a658a658a658
+        hex a658a658a658a658a658a658a658a658
         
         
 
