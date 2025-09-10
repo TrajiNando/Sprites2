@@ -14,7 +14,7 @@
 	org $80
 	seg Code
         org $f000
-2
+
 Start
 	CLEAN_START
 
